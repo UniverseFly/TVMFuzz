@@ -28,7 +28,7 @@ def gen_tir_with_vars() -> Tuple[tir.expr.PrimExpr, List[tir.expr.Var]]:
 if __name__ == '__main__':
     if not os.path.exists(args.dir_to_store):
         os.makedirs(args.dir_to_store)
-        print(f"Successfully create directory: {args.dir_to_store}")
+        print(f"Successfully create directory: {os.path.abspath(args.dir_to_store)}")
     for index in range(args.number):
         with open(os.path.join(args.dir_to_store, str(index)), 'wb') as f:
             data = gen_tir_with_vars()
