@@ -1,9 +1,9 @@
-from expr_generation import generate_tvm_and_np_tree
-from symboltable import SymbolTable
-from test_bed import evaluate_tvm_expr,compare_results,evaluate_np_expr
-from generation_node import GenerationNode
+from TVMFuzz.expr_generation import generate_tvm_and_np_tree
+from TVMFuzz.symboltable import SymbolTable
+from TVMFuzz.test_bed import evaluate_tvm_expr,compare_results,evaluate_np_expr
+from TVMFuzz.generation_node import GenerationNode
 from termcolor import colored
-from util import get_literal_value
+from TVMFuzz.util import get_literal_value
 import random, sys, traceback, datetime
 
 def run(timestamp = None, repetitions = 1):

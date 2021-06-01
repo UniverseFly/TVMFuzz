@@ -5,8 +5,8 @@ Generate TIRs and stores them as seeds
 from typing import Tuple, List
 
 from tvm import tir
-from symboltable import SymbolTable
-from expr_generation import generate_tvm_and_np_tree
+from TVMFuzz.symboltable import SymbolTable
+from TVMFuzz.expr_generation import generate_tvm_and_np_tree
 
 import pickle
 import argparse

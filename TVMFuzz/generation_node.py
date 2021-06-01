@@ -1,8 +1,8 @@
 import traceback
 
 from termcolor import colored
-from test_bed import compare_results,evaluate_tvm_expr,evaluate_np_expr
-from symboltable import SymbolTable
+from TVMFuzz.test_bed import compare_results,evaluate_tvm_expr,evaluate_np_expr
+from TVMFuzz.symboltable import SymbolTable
 
 class GenerationNode(object):
 	""" Composing instances of this class form a Tree which can emit python or tvm code

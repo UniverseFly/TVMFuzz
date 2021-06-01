@@ -3,11 +3,11 @@ from tvm import te,tir
 import random
 import traceback
 import sys 
-from probabilistic_selection import ProbabilisticSelection
-from expression import *
-from generation_node import GenerationNode
-from util import dtype_is_float,dtype_is_int
-from tvmfuzz_config import TVMFuzzConfig
+from TVMFuzz.probabilistic_selection import ProbabilisticSelection
+from TVMFuzz.expression import *
+from TVMFuzz.generation_node import GenerationNode
+from TVMFuzz.util import dtype_is_float,dtype_is_int
+from TVMFuzz.tvmfuzz_config import TVMFuzzConfig
 
 
 _expr_selection = ProbabilisticSelection([

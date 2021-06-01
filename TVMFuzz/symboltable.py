@@ -1,6 +1,6 @@
 import random
 from tvm import te,tir
-from tvmfuzz_config import TVMFuzzConfig
+from TVMFuzz.tvmfuzz_config import TVMFuzzConfig
 
 class SymbolTable:
 	"""
