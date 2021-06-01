@@ -3,9 +3,7 @@ from ast import literal_eval
 from os.path import dirname, realpath, join
 
 config_parser = ConfigParser()
-# a generic way to specify '../settings/tvmfuzz_settings.ini'
-config_path = join(dirname(dirname(realpath(__file__))),
-                   join("settings", "tvmfuzz_settings.ini"))
+config_path = join(dirname(realpath(__file__)), "tvmfuzz_settings.ini")
 config_parser.read(config_path)
 
 class TVMFuzzConfig(object):

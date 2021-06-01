@@ -6,5 +6,8 @@ setup(
     name='TVMFuzz',
     version=__version__,
     url='https://github.com/UniverseFly/TVMFuzz/',
-    packages=['TVMFuzz']
+    packages=['TVMFuzz'],
+    package_data={
+        "TVMFuzz": ["tvmfuzz_settings.ini"]
+    }
 )
