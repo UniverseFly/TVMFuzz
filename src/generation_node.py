@@ -56,7 +56,8 @@ class GenerationNode(object):
 		for arg in self.m_args:
 			try:
 				tvm_ir = arg.emit_tvm()
-				if(tvm_ir == None):
+                                # tvm_ir == None will crash!!
+				if(tvm_ir is None):
 					return None
 				args.append(tvm_ir)
 			except Exception:

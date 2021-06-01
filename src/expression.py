@@ -43,7 +43,7 @@ def _force_float(e):
 def _force_not_uint(e):
 	if dtype_is_uint(e):
 		return tir.expr.Cast('int32',e)
-	if isinstance(e,(numpy.bool,numpy.bool_,numpy.uint32)):
+	if isinstance(e,(numpy.bool8,numpy.bool_,numpy.uint32)):
 		return int(e)
 	return e
 
@@ -284,7 +284,8 @@ class EQ(BinaryOp):
 		res = lhs == rhs
 		if (isinstance(res,bool)):
 			return res
-		return res.asobject() # EqualOp is deferred eqOp in python
+		if isinstance(res, tir.expr.EqualOp): return res.asobject()
+		return res # EqualOp is deferred eqOp in python
 
 	def apply_np(lhs,rhs):
 		return lambda : lhs() == rhs()
@@ -294,7 +295,8 @@ class NE(BinaryOp):
 		res = lhs != rhs
 		if (isinstance(res,bool)):
 			return res
-		return res.asobject()
+		if isinstance(res, tir.expr.NotEqualOp): return res.asobject()
+		return res
 
 	def apply_np(lhs,rhs):
 		return lambda : lhs() != rhs()

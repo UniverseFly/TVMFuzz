@@ -1,4 +1,4 @@
-from tvm.runtime import DataType, TypeCode
+from tvm.runtime import DataType, DataTypeCode
 from tvm import te,tir
 import tvm
 
@@ -7,18 +7,18 @@ def dtype_is_int(value):
     if isinstance(value, int):
         return True
     return (isinstance(value, tir.expr.ExprOp) and
-            DataType(value.dtype).type_code == TypeCode.INT)
+            DataType(value.dtype).type_code == DataTypeCode.INT)
 
 def dtype_is_uint(value):
     return (isinstance(value, tir.expr.ExprOp) and
-            DataType(value.dtype).type_code == TypeCode.UINT)
+            DataType(value.dtype).type_code == DataTypeCode.UINT)
 
 #from tvm/python/tvm/tir/expr.py
 def dtype_is_float(value):
     if isinstance(value, float):
         return True
     return (isinstance(value, tir.expr.ExprOp) and
-            DataType(value.dtype).type_code == TypeCode.FLOAT)
+            DataType(value.dtype).type_code == DataTypeCode.FLOAT)
 
 def get_literal_value(e):
     """ Get literal value from expr
