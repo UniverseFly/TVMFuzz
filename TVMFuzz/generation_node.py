@@ -114,7 +114,10 @@ class GenerationNode(object):
 
 		tvm_res = evaluate_tvm_expr(self.m_emitted_tvm_op,suppress_errors = True)
 		np_res = evaluate_np_expr(self.m_emitted_np_op)
-		is_equal = compare_results(tvm_res,np_res)
+		try:
+			is_equal = compare_results(tvm_res,np_res)
+		except:
+			is_equal = False
 		if (not is_equal):
 			print("tvm_code={0}".format(colored(self.m_emitted_tvm_op,"yellow")))
 			print("np_res = {0}, tvm_res = {1}".format(np_res,tvm_res))
