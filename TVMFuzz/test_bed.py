@@ -89,15 +89,6 @@ def evaluate_np_expr(expr, suppress_errors = False):
 		return "Runtime Exception"
 
 def compare_results(result_one,result_two):
-	# Testing None values, or it may crash on `np.isinf`
-	if result_one is None and result_two is None:
-		return True
-	if result_one is None and result_two is not None:
-		return False
-	if result_one is not None and result_two is None:
-		return False
-	if result_one is not None and result_two is None:
-		pass
 	if(isinstance(result_one,(float,np.float32)) or isinstance(result_two,(float,np.float32))):
 		if np.isnan(result_one) and np.isnan(result_two):
 			return True
