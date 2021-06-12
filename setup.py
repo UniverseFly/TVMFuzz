@@ -1,13 +1,13 @@
 from setuptools import setup
 
-from TVMFuzz import __version__
+from tvmfuzz import __version__
 
 setup(
-    name='TVMFuzz',
+    name='tvmfuzz',
     version=__version__,
     url='https://github.com/UniverseFly/TVMFuzz/',
-    packages=['TVMFuzz'],
+    packages=['tvmfuzz'],
     package_data={
-        "TVMFuzz": ["tvmfuzz_settings.ini"]
+        "tvmfuzz": ["tvmfuzz_settings.ini"]
     }
 )
