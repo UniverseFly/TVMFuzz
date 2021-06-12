@@ -10,11 +10,11 @@ such that populating the variables and calling the root node will return the sam
 
 import tvm
 from tvm import te,tir
-from TVMFuzz.probabilistic_selection import ProbabilisticSelection
+from tvmfuzz.probabilistic_selection import ProbabilisticSelection
 import random
 from math import floor,ceil,log2,log10,trunc
-from TVMFuzz.symboltable import SymbolTable
-from TVMFuzz.util import *
+from tvmfuzz.symboltable import SymbolTable
+from tvmfuzz.util import *
 import numpy 
 
 int = numpy.int32

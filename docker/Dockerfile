@@ -29,5 +29,5 @@ WORKDIR /
 #--------------------------------------------------
 # Install TVMFuzz
 #--------------------------------------------------
-RUN git clone https://github.com/dpankratz/TVMFuzz.git tvmfuzz
+RUN git clone https://github.com/dpankratz/tvmfuzz.git tvmfuzz
 WORKDIR "tvmfuzz/src"	

@@ -1,9 +1,9 @@
-from TVMFuzz.expr_generation import generate_tvm_and_np_tree
-from TVMFuzz.symboltable import SymbolTable
-from TVMFuzz.test_bed import evaluate_tvm_expr,compare_results,evaluate_np_expr
-from TVMFuzz.generation_node import GenerationNode
+from tvmfuzz.expr_generation import generate_tvm_and_np_tree
+from tvmfuzz.symboltable import SymbolTable
+from tvmfuzz.test_bed import evaluate_tvm_expr,compare_results,evaluate_np_expr
+from tvmfuzz.generation_node import GenerationNode
 from termcolor import colored
-from TVMFuzz.util import get_literal_value
+from tvmfuzz.util import get_literal_value
 import random, sys, traceback, datetime
 
 def run(timestamp = None, repetitions = 1):
@@ -108,7 +108,7 @@ def _quick_test_file_name(timestamp):
 if __name__ == "__main__":
 	import argparse
 
-	arg_parser = argparse.ArgumentParser(description = 'Control the actions of TVMFuzz.')
+	arg_parser = argparse.ArgumentParser(description = 'Control the actions of tvmfuzz.')
 	arg_parser.add_argument("--Repetitions", metavar="1", type=int, default=1,
 								help="Number of programs to generate!")
 	arg_parser.add_argument("--Timestamp", metavar = "123456.12345", type=float, default=None,

@@ -9,6 +9,6 @@ For these reasons the situation is considerably simplified.
 
 ## Generation Strategy
 
-Rather than using rules with predicates and backtracing, TVMFuzz cajoles the inputs to an operator to be valid. That is to say that it is impossible for an operator to fail to generate after it has been selected in TVMFuzz. For example the `tir.Any` operator requires that every operand is of type `bool`. Rather than having a predicate that checks whether each operand is of type `bool` and backtracking if that check fails, TVMFuzz simply casts each operand to `bool`. 
+Rather than using rules with predicates and backtracing, TVMFuzz cajoles the inputs to an operator to be valid. That is to say that it is impossible for an operator to fail to generate after it has been selected in tvmfuzz. For example the `tir.Any` operator requires that every operand is of type `bool`. Rather than having a predicate that checks whether each operand is of type `bool` and backtracking if that check fails, TVMFuzz simply casts each operand to `bool`. 
 
 This approach has the advantage that when the table of operators and their probabilities is defined, each probability is accurate. However, the disadvantage of this approach is that there is a considerable amount of *glue* between operators. In practice, this has not stopped TVMFuzz from finding significant bugs. 

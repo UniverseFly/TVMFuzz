@@ -2,9 +2,9 @@ import tvm
 from tvm import te,tir
 import numpy as np
 import traceback 
-from TVMFuzz.symboltable import SymbolTable
-from TVMFuzz.expression import Neg, Add, Any
-from TVMFuzz.tvmfuzz_config import TVMFuzzConfig
+from tvmfuzz.symboltable import SymbolTable
+from tvmfuzz.expression import Neg, Add, Any
+from tvmfuzz.tvmfuzz_config import TVMFuzzConfig
 from termcolor import colored
 from datetime import datetime
 
