@@ -133,8 +133,7 @@ def _quick_test_str(root):
 
 
 def _quick_test_file_name(timestamp):
-	return "../quicktests/quick_test_" + str(timestamp)
-
+	return os.path.join(QUICK_TEST_DIR, "quick_test_" + str(timestamp))
 
 if __name__ == "__main__":
 	run(24*60)
