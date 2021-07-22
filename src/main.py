@@ -129,4 +129,4 @@ def _quick_test_file_name(timestamp):
 
 
 if __name__ == "__main__":
-	run(0.1)
+	run(24*60)
