@@ -7,8 +7,7 @@ from tvmfuzz.util import get_literal_value
 import random, time, datetime
 import multiprocessing as mp
 import pickle
-
-TIMEOUT = 5*60
+from tvmfuzz import TIMEOUT
 
 def run(duration: int):
 	"""Run for duration minutes"""

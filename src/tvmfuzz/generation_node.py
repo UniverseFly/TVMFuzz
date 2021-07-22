@@ -2,7 +2,8 @@ import traceback
 
 from termcolor import colored
 from tvmfuzz.test_bed import compare_results,evaluate_tvm_expr,evaluate_np_expr
-from tvmfuzz.symboltable import SymbolTable
+import multiprocessing as mp
+from . import TIMEOUT
 
 class GenerationNode(object):
 	""" Composing instances of this class form a Tree which can emit python or tvm code
@@ -111,8 +112,16 @@ class GenerationNode(object):
 			if (not arg.find_mismatch()):
 				return False
 
-
-		tvm_res = evaluate_tvm_expr(self.m_emitted_tvm_op,suppress_errors = True)
+		with mp.Manager() as m:
+			d = m.dict()
+			p = mp.Process(target=evaluate_tvm_expr, args=(self.m_emitted_tvm_op, d, True))
+			p.start()
+			p.join(TIMEOUT)
+			if p.is_alive() or p.exitcode != 0:
+				p.terminate()
+				return
+			else:
+				tvm_res = d['ret']
 		np_res = evaluate_np_expr(self.m_emitted_np_op)
 		try:
 			is_equal = compare_results(tvm_res,np_res)
