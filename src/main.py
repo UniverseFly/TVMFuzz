@@ -73,8 +73,10 @@ def run(duration: int):
 		if(np_result == None and tvm_result == None):
 			print("Both crashed.")
 		else:
-			
-			is_equal = compare_results(np_result,tvm_result)
+			try:
+				is_equal = compare_results(np_result,tvm_result)
+			except:
+				is_equal = False
 			print("equal={0}".format(colored("True","green") if is_equal else colored("False","red")))
 			if (not is_equal and tvm_result and np_result):
 				root.find_mismatch()
