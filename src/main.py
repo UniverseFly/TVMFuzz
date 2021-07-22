@@ -8,6 +8,12 @@ import random, time, datetime
 import multiprocessing as mp
 import pickle
 from tvmfuzz import TIMEOUT
+import os
+
+QUICK_TEST_DIR = os.path.join(os.path.abspath(os.path.dirname(os.path.dirname(__file__))), 'quicktests')
+if not os.path.exists(QUICK_TEST_DIR):
+	os.mkdir(QUICK_TEST_DIR)
+	print(f'Created {QUICK_TEST_DIR}')
 
 def run(duration: int):
 	"""Run for duration minutes"""
