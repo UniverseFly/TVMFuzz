@@ -8,7 +8,7 @@ from tvmfuzz.tvmfuzz_config import TVMFuzzConfig
 from termcolor import colored
 from datetime import datetime
 
-def evaluate_tvm_expr(expr,suppress_errors = False):
+def evaluate_tvm_expr(expr, d, suppress_errors = False):
 	""" Evaluate given tvm expr
 
 	This uses the binds in SymbolTable to provide the 
@@ -40,7 +40,7 @@ def evaluate_tvm_expr(expr,suppress_errors = False):
 	if(isinstance(expr,tir.expr.ExprOp)):
 		dtype = expr.dtype
 	else:
-		return expr
+		d['ret'] = expr
 
 	try: 
 		shape = (1,)
@@ -61,11 +61,11 @@ def evaluate_tvm_expr(expr,suppress_errors = False):
 
 
 		f(*(tvm_binds + [c_tvm]))
-		return  c_tvm.asnumpy()[0]
+		d['ret'] = c_tvm.asnumpy()[0]
 	except Exception:
 		if (not suppress_errors):
 			traceback.print_exc()
-		return "Runtime Exception"
+		d['ret'] = "Runtime Exception"
 
 def evaluate_np_expr(expr, suppress_errors = False):
 	""" Evaluate numpy expression

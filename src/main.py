@@ -4,34 +4,37 @@ from tvmfuzz.test_bed import evaluate_tvm_expr,compare_results,evaluate_np_expr
 from tvmfuzz.generation_node import GenerationNode
 from termcolor import colored
 from tvmfuzz.util import get_literal_value
-import random, sys, traceback, datetime
+import random, time, datetime
+import multiprocessing as mp
+import pickle
 
-def run(timestamp = None, repetitions = 1):
-	""" Run the fuzzer 
+TIMEOUT = 5*60
 
-	Parameters
-	----------
-	timestamp : float
-		timestamp value to use for seed
-	repetitions : int
-		number of exprs to generate
-	"""
+def run(duration: int):
+	"""Run for duration minutes"""
+	start_time = time.time()
+	end_time = start_time + duration * 60
 
 	quick_tests = []
 
-	for _ in range(repetitions):
-		if not timestamp:
-			seed = datetime.datetime.utcnow().timestamp()
-			print("timestamp ={0}\n".format(seed))
-		else:
-			print("using timestamp={0}\n".format(timestamp))
-			seed = timestamp
-			timestamp = None
+	tirs = []
+	hours = 1
+	while time.time() < end_time:
+		print('Time remaining:', end_time - time.time())
+		seed = datetime.datetime.utcnow().timestamp()
+		print("timestamp ={0}\n".format(seed))
 		random.seed(seed)
 
 		root = generate_tvm_and_np_tree()
 
 		tvm_expr = root.emit_tvm()
+		elapsed_time = time.time() - start_time
+		tirs.append((elapsed_time, tvm_expr))
+		if elapsed_time / 3600 > hours:
+			with open(str(hours), 'wb') as f:
+				pickle.dump(tirs, f)
+			hours += 1
+			tirs = []
 
 		print("tree={0}".format(colored(root,"cyan")))
 
@@ -53,7 +56,16 @@ def run(timestamp = None, repetitions = 1):
 			tvm_result = lit_value
 			print("tvm result={0} found in front end".format(tvm_result))
 		else:
-			tvm_result = evaluate_tvm_expr(tvm_expr)
+			with mp.Manager() as m:
+				d = m.dict()
+				p = mp.Process(target=evaluate_tvm_expr, args=(tvm_expr, d))
+				p.start()
+				p.join(TIMEOUT)
+				if p.is_alive() or p.exitcode != 0:
+					p.terminate()
+					continue
+				else:
+					tvm_result = d['ret']
 			if(tvm_result == "Runtime Exception"):
 				print("tvm error={0}".format(GenerationNode.TVM_CULPRIT))
 			print("tvm result={0}".format(tvm_result))
@@ -69,7 +81,17 @@ def run(timestamp = None, repetitions = 1):
 				root.find_mismatch()
 				print("mismatch={0}".format(colored(GenerationNode.MISMATCH_CULPRIT,"red")))
 				for arg in GenerationNode.MISMATCH_CULPRIT.m_args:
-					print("\t {0} np val={1}, tvm val={2}".format(arg.m_op.__name__,evaluate_np_expr(arg.m_emitted_np_op),evaluate_tvm_expr(arg.m_emitted_tvm_op)))
+					with mp.Manager() as m:
+						d = m.dict()
+						p = mp.Process(target=evaluate_tvm_expr, args=(arg.m_emitted_tvm_op, d))
+						p.start()
+						p.join(TIMEOUT)
+						if p.is_alive() or p.exitcode != 0:
+							p.terminate()
+							continue
+						else:
+							tvm_val = d['ret']
+					print("\t {0} np val={1}, tvm val={2}".format(arg.m_op.__name__,evaluate_np_expr(arg.m_emitted_np_op), tvm_val))
 
 				quick_test_file_name = _quick_test_file_name(seed)
 				quick_test_file = open(quick_test_file_name,"w")
@@ -77,6 +99,8 @@ def run(timestamp = None, repetitions = 1):
 				quick_test_file.close()
 				quick_tests.append(quick_test_file_name)
 	
+	with open(str(hours), 'wb') as f:
+		pickle.dump(tirs, f)
 	for quick_test in quick_tests:
 		print("Quick test written to {0}".format(quick_test))
 					
@@ -106,14 +130,4 @@ def _quick_test_file_name(timestamp):
 
 
 if __name__ == "__main__":
-	import argparse
-
-	arg_parser = argparse.ArgumentParser(description = 'Control the actions of tvmfuzz.')
-	arg_parser.add_argument("--Repetitions", metavar="1", type=int, default=1,
-								help="Number of programs to generate!")
-	arg_parser.add_argument("--Timestamp", metavar = "123456.12345", type=float, default=None,
-								help="Use old seed to execute")
-
-	args = arg_parser.parse_args()
-
-	run(args.Timestamp, args.Repetitions)
+	run(0.1)
