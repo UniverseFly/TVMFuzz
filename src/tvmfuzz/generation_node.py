@@ -3,7 +3,6 @@ import traceback
 from termcolor import colored
 from tvmfuzz.test_bed import compare_results,evaluate_tvm_expr,evaluate_np_expr
 import multiprocessing as mp
-from . import TIMEOUT
 
 class GenerationNode(object):
 	""" Composing instances of this class form a Tree which can emit python or tvm code
@@ -96,7 +95,7 @@ class GenerationNode(object):
 		self.m_emitted_np_op = self.m_op.apply_np(*args)
 		return self.m_emitted_np_op
 
-	def find_mismatch(self):
+	def find_mismatch(self, timeout):
 		""" Detect where TVM and NP programs compute different results
 		
 		Sets GenerationNode.MISMATCH_CULPRIT to GenerationNode causing
@@ -109,14 +108,14 @@ class GenerationNode(object):
 
 		"""
 		for arg in self.m_args:
-			if (not arg.find_mismatch()):
+			if (not arg.find_mismatch(timeout)):
 				return False
 
 		with mp.Manager() as m:
 			d = m.dict()
 			p = mp.Process(target=evaluate_tvm_expr, args=(self.m_emitted_tvm_op, d, True))
 			p.start()
-			p.join(TIMEOUT)
+			p.join(timeout)
 			if p.is_alive() or p.exitcode != 0:
 				p.terminate()
 				return
