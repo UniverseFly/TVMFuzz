@@ -16,10 +16,7 @@ cmd1 = f'PYTHONPATH={NOCOV_TVM_HOME}/python:$PYTHONPATH python src/run_tvmfuzz.p
 print(cmd1)
 os.system(cmd1)
 
-cmd2 = f'PYTHONPATH={COV_TVM_HOME}/python:$PYTHONPATH python src/save_cov.py --report-folder {args.report_folder}'
+cmd2 = f'PYTHONPATH={COV_TVM_HOME}/python:$PYTHONPATH COV=1 python src/run_tvmfuzz.py --fuzz-time {args.fuzz_time} --report-folder {args.report_folder}'
 print(cmd2)
 os.system(cmd2)
 
-cmd3 = f"python src/plot_cov.py --cov-file {os.path.join(args.report_folder, 'cov.pickle')}"
-print(cmd3)
-os.system(cmd3)

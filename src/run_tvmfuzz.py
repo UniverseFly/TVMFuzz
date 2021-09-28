@@ -2,6 +2,7 @@ import tvm
 from tvm import te
 from tvm.driver.build_module import schedule_to_module
 from tvmfuzz.expr_generation import generate_tvm_and_np_tree
+from tvmfuzz.report import Reporter
 from tvmfuzz.symboltable import SymbolTable
 from tvmfuzz.test_bed import evaluate_tvm_expr,compare_results,evaluate_np_expr
 from tvmfuzz.generation_node import GenerationNode
@@ -13,16 +14,26 @@ import pickle
 import os
 import argparse
 
+IT_FILE_NAME = 'ITERATION.pickle'
+USE_COV = os.getenv("COV") is not None
+if USE_COV:
+	from tvm.contrib import coverage
+	coverage.reset()
+	f = open(IT_FILE_NAME, 'rb')
+	ITERATION: int = pickle.load(f)
+	f.close()
+
 parser = argparse.ArgumentParser()
 parser.add_argument('--fuzz-time', type=float, required=True, help='Fuzzing minutes')
 parser.add_argument('--report-folder', type=str, required=True, help='Folder to save TIRs')
-parser.add_argument('--timeout', type=float, default=600, help='Building + execution timeout (seconds)')
+parser.add_argument('--timeout', type=float, default=2, help='Building + execution timeout (seconds)')
 args = parser.parse_args()
 
 TIMEOUT: float = args.timeout
-REPORT_FOLDER: str = os.path.join(os.getcwd(), args.report_folder)
-os.mkdir(REPORT_FOLDER)
-print(f'Created {REPORT_FOLDER}')
+
+if USE_COV:
+	REPORT_FOLDER: str = os.path.join(os.getcwd(), args.report_folder)
+	REPORTER = Reporter(REPORT_FOLDER, True)
 
 
 QUICK_TEST_DIR = os.path.join(os.getcwd(), 'quicktests')
@@ -39,7 +50,17 @@ def run(duration: int):
 
 	tirs = []
 	hours = 1
-	while time.time() < end_time:
+	it = 0
+	while True:
+		it += 1
+		if not USE_COV:
+			if time.time() >= end_time:
+				break
+		else:
+			REPORTER.record_coverage()
+			if it > ITERATION:
+				break
+
 		print('Time remaining:', end_time - time.time())
 		seed = datetime.datetime.utcnow().timestamp()
 		print("timestamp ={0}\n".format(seed))
@@ -53,12 +74,6 @@ def run(duration: int):
 		mod = schedule_to_module(s, SymbolTable.variables + [c])
 
 		elapsed_time = time.time() - start_time
-		tirs.append((elapsed_time, mod))
-		if elapsed_time / 3600 > hours:
-			with open(os.path.join(REPORT_FOLDER, f'{str(hours)}.mod'), 'wb') as f:
-				pickle.dump(tirs, f)
-			hours += 1
-			tirs = []
 
 		print("tree={0}".format(colored(root,"cyan")))
 
@@ -90,6 +105,10 @@ def run(duration: int):
 					continue
 				else:
 					tvm_result = d['ret']
+					if USE_COV:
+						now, hitmap = d['cov']
+						coverage.set_now(now)
+						coverage.set_hitmap(hitmap)
 			if(tvm_result == "Runtime Exception"):
 				print("tvm error={0}".format(GenerationNode.TVM_CULPRIT))
 			print("tvm result={0}".format(tvm_result))
@@ -124,10 +143,10 @@ def run(duration: int):
 				quick_test_file.write(_quick_test_str(GenerationNode.MISMATCH_CULPRIT))
 				quick_test_file.close()
 				quick_tests.append(quick_test_file_name)
-	print(tirs)
+	print(it)
+	with open(IT_FILE_NAME, 'wb') as f:
+		pickle.dump(it, f)
 	
-	with open(os.path.join(REPORT_FOLDER, f'{str(hours)}.mod'), 'wb') as f:
-		pickle.dump(tirs, f)
 	for quick_test in quick_tests:
 		print("Quick test written to {0}".format(quick_test))
 					

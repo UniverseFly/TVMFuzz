@@ -1,5 +1,11 @@
 ## TVMFuzz
 
+## Evaluate coverage
+
+```python
+python src/main.py --fuzz-time 240 --report-folder 4h --cov-tvm-home [...] --nocov-tvm-home [...]
+```
+
 A fuzzer for tensor-level intermediate representation(TIR) expressions in [TVM](https://tvm.apache.org/) created by David Pankratz for Secure Software Engineering Winter 2019 at the University of Alberta.
 
 TIR is user-facing as it can be used in tasks such as implementing custom neural network operators or implementing existing operators using custom hardware instructions. TIR and its infrastructure is also used by TVM in the process of lowering from the Relay IR level to machine instruction level. Thus, fixing bugs in TIR is significant in improving the usability and correctness of TVM as a whole. 

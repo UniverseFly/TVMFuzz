@@ -7,6 +7,11 @@ from tvmfuzz.expression import Neg, Add, Any
 from tvmfuzz.tvmfuzz_config import TVMFuzzConfig
 from termcolor import colored
 from datetime import datetime
+import os
+try:
+	from tvm.contrib import coverage
+except Exception as e:
+	print(e)
 
 def evaluate_tvm_expr(expr, d, suppress_errors = False):
 	""" Evaluate given tvm expr
@@ -66,6 +71,9 @@ def evaluate_tvm_expr(expr, d, suppress_errors = False):
 		if (not suppress_errors):
 			traceback.print_exc()
 		d['ret'] = "Runtime Exception"
+	finally:
+		if os.getenv('COV') is not None:
+			d['cov'] = coverage.get_now(), coverage.get_hitmap()
 
 def evaluate_np_expr(expr, suppress_errors = False):
 	""" Evaluate numpy expression
